@@ -1,0 +1,57 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      <p class="display-3">ClassChat</p>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">IOS Chat</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div>
+   <!-- {{messages|json}} -->
+   
+   <div class="row"  *ngFor="let message of messages">
+    <div class="col" [ngClass]="message.user!=userName?'d-flex justify-content-end':''" >
+      <ion-list>
+      <ion-item>{{message.user}} {{message.time}}</ion-item>
+    <ng-container *ngIf="message.user!=userName; else en">
+      <ion-item>{{message.message}}</ion-item>
+
+    </ng-container>
+    <ng-template #en>
+      <ion-textarea [(ngModel)]="message.message">       
+      </ion-textarea>
+      <ion-button (click)="updateMessage(message)" size="small" shape="round">Save</ion-button>
+      <ion-button (click)="deleteMessage(message)" size="small" shape="round">Delete</ion-button>
+    </ng-template>
+    </ion-list>
+    </div>
+    
+   </div> 
+   
+ 
+   <ion-list>
+    <ion-item>
+     <ion-textarea [(ngModel)]="newMessage" labelPlacement="floating" >
+        <div slot="label">Message <ion-text color="danger">(Required)</ion-text></div>
+      </ion-textarea>
+    </ion-item>
+    <ion-item>
+      <ion-button (click)="addMessage()" shape="round">Send</ion-button>
+    </ion-item>
+  </ion-list>
+
+
+  </div>
+</ion-content>
+<ion-footer>
+  <ion-title>
+  SuperChat 2024
+</ion-title>
+</ion-footer>
