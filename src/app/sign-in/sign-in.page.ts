@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { ReCaptchaV3Provider } from 'firebase/app-check';
 import { RecaptchaVerifier, getAuth } from 'firebase/auth';
 import { environment } from 'src/environments/environment';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-sign-in',
@@ -11,14 +12,19 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./sign-in.page.scss'],
 })
 export class SignInPage  {
-  phone="501158737"
+  // phone="501158737"
+  phone="303236954"
   code=""
   countryJson=environment.counryJson;
   countryPhoneCode="+36"
-  recaptaInvisible!:RecaptchaVerifier
+  recapta!:any
+  recaptaInvisible!:any
+  recaptavisible!:RecaptchaVerifier
   smsSend=false
+  recaptcha=true
+  userName=""
 
-  constructor(private auth:AuthService, private router: Router) { 
+  constructor(private auth:AuthService, private router: Router, private alerController:AlertController) { 
     this.auth.getUser().subscribe(
       (user)=>{
         console.log("SignIn User", user)
@@ -31,26 +37,50 @@ export class SignInPage  {
     console.log(event)
   }
 
+  ionViewWillLeave(){
+    
+  }
+
  ionViewDidEnter(){
-  this.recaptaInvisible = new RecaptchaVerifier(
+  if (!this.recaptaInvisible) this.recaptaInvisible = new RecaptchaVerifier(
   getAuth(),
   'recaptchainvisible',
   {
     'size':'invisible',
-    'callback': ()=>{},
+    'callback': ()=>{
+      this.recapta=this.recaptaInvisible
+    },
     'expired-callback':()=>{}
+  }
+  )
+  this.recapta=this.recaptaInvisible
+
+  if (!this.recaptavisible) this.recaptavisible = new RecaptchaVerifier(
+  getAuth(),
+  'recaptchavisible',
+  {
+    'size':'normal',
+    'callback': ()=>{
+      this.recaptcha=true
+      this.recapta=this.recaptavisible
+    },
+    'expired-callback':()=>{
+      this.recaptcha=false
+      console.log("Látható Recaptcha Hiba!")
+    }
   }
   )
  }
 
 
  signInWithPhone(){
-  this.auth.signInWithPhone(this.countryPhoneCode+this.phone,this.recaptaInvisible)
+  if (this.recaptcha)
+  this.auth.signInWithPhone(this.countryPhoneCode+this.phone,this.recapta, this.userName)
   .then(
     (res)=>{
-      this.smsSend=true
+      // this.smsSend=true
       console.log("SMS elküldve")
-    
+      this.verification()
     }
   )
   .catch(
@@ -60,6 +90,31 @@ export class SignInPage  {
     }
   )
  }
+
+ async verification(){
+  const alert= await this.alerController.create({
+    header:"Enter Verification Code",
+    inputs:[
+      {
+        name: 'code',
+        type:"text",
+        placeholder:'Enter your code'
+      }
+    ],
+    buttons:[
+      {
+        text:"Enter",
+        handler: (res)=>{
+          this.code=res.code
+          this.verificationCode()
+        }
+      }
+    ]
+  })
+  await alert.present()
+ }
+
+
  verificationCode(){
   this.auth.verificationCode(this.code).then(
     ()=>{
@@ -67,7 +122,11 @@ export class SignInPage  {
     
     }
   ).catch(
-    ()=>console.log("Kód nem stimmel")
+    ()=>{
+      this.recaptcha=false
+      this.recaptavisible.render()
+      console.log("Kód nem stimmel")
+  }
   )
  }
 

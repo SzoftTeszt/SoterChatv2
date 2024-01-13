@@ -12,6 +12,7 @@ export class HomePage {
   messages:any
   newMessage:any
   userName="Attila"
+
   constructor(private base:BaseService, private auth:AuthService) {
     this.base.getMessages().snapshotChanges().pipe(
       map(
@@ -22,9 +23,18 @@ export class HomePage {
     ).subscribe(
       (res)=>this.messages=res
     )
+
+   
   }
 
-
+  ionViewDidEnter(){
+    this.auth.getUser().subscribe(
+      (user:any)=>{
+        console.log("HomePage User", user)
+        if (user) this.userName=user.displayName
+      }
+    )
+  }
   addMessage(){
     if (this.newMessage){
       let time= new Date().toLocaleTimeString()

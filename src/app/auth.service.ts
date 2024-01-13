@@ -11,11 +11,23 @@ export class AuthService {
 
   userSub=new Subject()
   confirmationResult!:firebase.auth.ConfirmationResult
+  userName:any
 
   constructor(private fireAuth:AngularFireAuth, private router: Router) {
     this.fireAuth.onAuthStateChanged( 
       (user)=>{
-        this.userSub.next(user)
+        if (user && this.userName){
+          user.updateProfile(
+            {
+              displayName:this.userName
+            }
+          ).then(
+            ()=>{
+              this.userSub.next(user)
+            }
+          )
+        }
+        else this.userSub.next(user)
       }    
     )
    }
@@ -30,7 +42,8 @@ export class AuthService {
     )
    }
 
-   signInWithPhone(phoneNumber:any, verifier:any){
+   signInWithPhone(phoneNumber:any, verifier:any, userName:any){
+    this.userName=userName
     return new Promise<any>(
       (resolve, reject)=>{
         this.fireAuth.signInWithPhoneNumber(phoneNumber, verifier).then(
