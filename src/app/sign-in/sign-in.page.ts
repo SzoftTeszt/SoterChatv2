@@ -25,7 +25,8 @@ export class SignInPage  {
 
 
   constructor(private auth:AuthService, private router: Router, private alerController:AlertController) { 
-    this.auth.getUser().subscribe(
+    this.auth.getUser()
+    .subscribe(
       (user)=>{
         console.log("SignIn User", user)
         if (user) this.router.navigate(['/home'])

@@ -11,12 +11,51 @@
     </ion-toolbar>
   </ion-header>
 
-  <ion-grid>
+  <ion-grid *ngIf="user">
 
     <ion-row>
       <ion-col>       
           <ion-item>
-            <!-- <ion-input [(ngModel)]="userName" label="userName" placeholder="Enter Your Nick Name"></ion-input> -->
+            <ion-input [(ngModel)]="user._delegate.displayName" label="userName" placeholder="Enter Your Nick Name"></ion-input>
+          </ion-item>                    
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>       
+          <ion-item>
+            <ion-input [(ngModel)]="user._delegate.email" label="email" placeholder="Enter Your Email Address"></ion-input>
+          </ion-item>                    
+      </ion-col>
+      <ion-col *ngIf="!user._delegate.emailVerified" size="4">       
+        <ion-item>
+          Email is not verified!
+        </ion-item>                    
+    </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>       
+          <ion-item>
+            <ion-input disabled="true"  [(ngModel)]="user._delegate.phoneNumber" label="phone" ></ion-input>
+          </ion-item>                    
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>       
+          <ion-item>
+            Profil Picture
+            <!-- <ion-input [(ngModel)]="user.email" label="email" placeholder="Enter Your Email Address"></ion-input> -->
+          </ion-item>                    
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>       
+          <ion-item>
+            <ion-button  (click)="update()" expand="block">Update</ion-button>
+          </ion-item>                    
+      </ion-col>
+      <ion-col>       
+          <ion-item>
+            <ion-button  (click)="router.navigate(['/home'])" expand="block">Cancel</ion-button>
           </ion-item>                    
       </ion-col>
     </ion-row>

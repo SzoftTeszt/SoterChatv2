@@ -24,15 +24,24 @@ export class AuthService {
 
   updateProfil(body:any){
       if (this.user) {
-        this.user.updateProfile(
+         this.user.updateProfile(
           {
-            displayName:body.username,
-            email:body.email,
-            //profilkép
+            displayName:body.displayName,
+            photoURL:body.photoURL
           }
+        ).then(
+          ()=>this.user.updateEmail(body.email).then(
+            ()=>{
+               this.sendVerificationEmail()
+               this.router.navigate(['/home'])
+            }
+            
+           
+          )
         )
-      }
+      // }
   }
+}
 
         // if (user && this.userName){
         //   user.updateProfile(
@@ -78,4 +87,12 @@ export class AuthService {
    verificationCode(code:any){
     return this.confirmationResult.confirm(code)
    }
+
+   sendVerificationEmail(){
+    if (!this.user.emailVerified)
+        this.user.sendEmailVerification().then(
+        (()=>console.log("Email send")))
+        .catch(()=>console.log("Email not send"))
+    
+  }
 }
