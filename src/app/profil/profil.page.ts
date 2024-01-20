@@ -37,4 +37,8 @@ export class ProfilPage implements OnInit {
   sendVerificationEmail(){
     this.auth.sendVerificationEmail()
   }
+
+  changePhoto(){
+    console.log("changePhoto()")
+  }
 }

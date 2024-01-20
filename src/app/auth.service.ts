@@ -34,12 +34,9 @@ export class AuthService {
             ()=>{
                this.sendVerificationEmail()
                this.router.navigate(['/home'])
-            }
-            
-           
-          )
-        )
-      // }
+            }          
+           )
+        )   
   }
 }
 
