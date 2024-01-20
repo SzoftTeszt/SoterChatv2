@@ -3,6 +3,8 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Subject } from 'rxjs';
 import firebase from 'firebase/compat/app'
+import { AngularFireStorage } from '@angular/fire/compat/storage';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 
 @Injectable({
   providedIn: 'root'
@@ -12,8 +14,10 @@ export class AuthService {
   userSub=new BehaviorSubject<any>(null)
   confirmationResult!:firebase.auth.ConfirmationResult
   user:any
+  photo:any
+  photoUrlSub= new Subject()
 
-  constructor(private fireAuth:AngularFireAuth, private router: Router) {
+  constructor(private storage: AngularFireStorage, private fireAuth:AngularFireAuth, private router: Router) {
     this.fireAuth.onAuthStateChanged( 
       (user)=>{
         this.user=user
@@ -21,6 +25,46 @@ export class AuthService {
       }
     )
   }
+  getPhotoURL(){
+    return this.photoUrlSub
+  }
+  changePhoto(){
+    const capturedPhoto = Camera.getPhoto({
+      resultType: CameraResultType.Base64,
+      source: CameraSource.Camera,
+      quality:50,
+      width:150,
+      height:150
+    }).then(
+      (photo)=>{
+        this.photo=photo
+        this.pushFileToStorage(photo.base64String)
+        console.log("Photo", this.photo)
+      }
+    )    
+  }
+
+  pushFileToStorage(photoString:any){
+    const hova = this.user.uid+"ProfilPhoto.jpeg"
+    const storageRef= this.storage.ref(hova)
+
+    storageRef.putString(photoString, 'base64').then(
+      (res)=>{
+        console.log("Feltöltve", res)
+        storageRef.getDownloadURL().subscribe(
+          (url)=>{
+            console.log("url:", url)
+            this.photoUrlSub.next(url)
+          }
+        )
+      }
+    ).catch(
+      (res)=>{
+        console.log("Hibás feltöltés", res)
+      }
+    )
+  }
+
 
   updateProfil(body:any){
       if (this.user) {

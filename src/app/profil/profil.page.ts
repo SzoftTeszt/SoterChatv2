@@ -19,6 +19,10 @@ export class ProfilPage implements OnInit {
         }
       }
     )
+
+    this.auth.getPhotoURL().subscribe(
+      (url)=> this.user._delegate.photoURL=url
+    )
    }
 
   ngOnInit() {
@@ -40,5 +44,6 @@ export class ProfilPage implements OnInit {
 
   changePhoto(){
     console.log("changePhoto()")
+    this.auth.changePhoto()
   }
 }

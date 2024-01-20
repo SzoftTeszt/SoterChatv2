@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
 export class HomePage {
   messages:any
   newMessage:any
-  userName="Attila"
+  user:any
 
   constructor(public router:Router,private base:BaseService, private auth:AuthService) {
     this.base.getMessages().snapshotChanges().pipe(
@@ -32,14 +32,14 @@ export class HomePage {
     this.auth.getUser().subscribe(
       (user:any)=>{
         console.log("HomePage User", user)
-        if (user) this.userName=user.displayName
+        if (user) this.user=user
       }
     )
   }
   addMessage(){
     if (this.newMessage){
       let time= new Date().toLocaleTimeString()
-      let body = {user:this.userName, time:time, message:this.newMessage}
+      let body = {uid:this.user.uid ,user:this.user.displayName, time:time, message:this.newMessage}
       this.base.addMessage(body)
       this.newMessage=""
      }

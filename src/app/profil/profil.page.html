@@ -43,7 +43,8 @@
       <ion-col>       
           <ion-item>
             <ion-thumbnail>
-              <img alt="Silhouette of mountains" src="../../assets/ProfilePic.jpg" />
+              <img *ngIf="!this.user._delegate.photoURL" alt="Silhouette of mountains" src="../../assets/ProfilePic.jpg" />
+              <img *ngIf="this.user._delegate.photoURL" alt="Silhouette of mountains" [src]="this.user._delegate.photoURL" />
             </ion-thumbnail>
           </ion-item>                    
       </ion-col>

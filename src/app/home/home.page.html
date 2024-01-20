@@ -3,8 +3,11 @@
     <ion-title>
       <p class="display-3">ClassChat</p>
     </ion-title>
+    <img *ngIf="this.user?.photoURL" alt="Silhouette of mountains" [src]="this.user.photoURL" />
     <ion-button (click)="router.navigate(['/profil'])" size="small" shape="round">Profil</ion-button>
-
+    <ion-item>
+      <ion-button (click)="logout()" shape="round">Logout</ion-button>
+    </ion-item>
   </ion-toolbar>
 </ion-header>
 
@@ -15,17 +18,17 @@
     </ion-toolbar>
   </ion-header>
 
-  <div>
-    <ion-item>
-      <ion-button (click)="logout()" shape="round">Logout</ion-button>
-    </ion-item>
+  <div *ngIf="user">
+   
    <!-- {{messages|json}} -->
    
    <div class="row"  *ngFor="let message of messages">
-    <div class="col" [ngClass]="message.user!=userName?'d-flex justify-content-end':''" >
+    <div class="col" [ngClass]="message.uid!=user.uid?'d-flex justify-content-end':''" >
       <ion-list>
-      <ion-item>{{message.user}} {{message.time}}</ion-item>
-    <ng-container *ngIf="message.user!=userName; else en">
+      <ion-item>
+       
+        {{message.user}} {{message.time}}</ion-item>
+    <ng-container *ngIf="message.uid!=user.uid; else en">
       <ion-item>{{message.message}}</ion-item>
 
     </ng-container>
