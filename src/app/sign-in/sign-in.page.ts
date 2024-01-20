@@ -22,7 +22,7 @@ export class SignInPage  {
   recaptavisible!:RecaptchaVerifier
   smsSend=false
   recaptcha=true
-  userName=""
+
 
   constructor(private auth:AuthService, private router: Router, private alerController:AlertController) { 
     this.auth.getUser().subscribe(
@@ -75,7 +75,7 @@ export class SignInPage  {
 
  signInWithPhone(){
   if (this.recaptcha)
-  this.auth.signInWithPhone(this.countryPhoneCode+this.phone,this.recapta, this.userName)
+  this.auth.signInWithPhone(this.countryPhoneCode+this.phone,this.recapta)
   .then(
     (res)=>{
       // this.smsSend=true

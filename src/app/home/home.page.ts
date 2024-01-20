@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { BaseService } from '../base.service';
 import { map } from 'rxjs';
 import { AuthService } from '../auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -13,7 +14,7 @@ export class HomePage {
   newMessage:any
   userName="Attila"
 
-  constructor(private base:BaseService, private auth:AuthService) {
+  constructor(public router:Router,private base:BaseService, private auth:AuthService) {
     this.base.getMessages().snapshotChanges().pipe(
       map(
         (ch)=> ch.map(

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router } from '@angular/router';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import firebase from 'firebase/compat/app'
 
 @Injectable({
@@ -9,28 +9,44 @@ import firebase from 'firebase/compat/app'
 })
 export class AuthService {
 
-  userSub=new Subject()
+  userSub=new BehaviorSubject<any>(null)
   confirmationResult!:firebase.auth.ConfirmationResult
-  userName:any
+  user:any
 
   constructor(private fireAuth:AngularFireAuth, private router: Router) {
     this.fireAuth.onAuthStateChanged( 
       (user)=>{
-        if (user && this.userName){
-          user.updateProfile(
-            {
-              displayName:this.userName
-            }
-          ).then(
-            ()=>{
-              this.userSub.next(user)
-            }
-          )
-        }
-        else this.userSub.next(user)
-      }    
+        this.user=user
+        this.userSub.next(user)
+      }
     )
-   }
+  }
+
+  updateProfil(body:any){
+      if (this.user) {
+        this.user.updateProfile(
+          {
+            displayName:body.username,
+            email:body.email,
+            //profilkép
+          }
+        )
+      }
+  }
+
+        // if (user && this.userName){
+        //   user.updateProfile(
+        //     {
+        //       displayName:this.userName
+        //     }
+        //   ).then(
+        //     ()=>{
+        //       this.userSub.next(user)
+        //     }
+        //   )
+        
+        
+   
 
    getUser(){
     return this.userSub;
@@ -42,8 +58,8 @@ export class AuthService {
     )
    }
 
-   signInWithPhone(phoneNumber:any, verifier:any, userName:any){
-    this.userName=userName
+   signInWithPhone(phoneNumber:any, verifier:any, userName?:any){
+    
     return new Promise<any>(
       (resolve, reject)=>{
         this.fireAuth.signInWithPhoneNumber(phoneNumber, verifier).then(
